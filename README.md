@@ -3,10 +3,10 @@
 
 Repository for HW assignments of Stat 133 (Fall 2017)
 
-- Student name: First Last
-- Github username: usrname
-- Lab section: 101
-- GSI: Leia Organa
+- Student name: Tianshu Zhao
+- Github username: ariel1995zhao
+- Lab section: 109
+- GSI: Minchul
 
 -----
 
