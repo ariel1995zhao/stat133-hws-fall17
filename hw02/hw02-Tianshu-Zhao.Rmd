@@ -104,9 +104,9 @@ Provide the names of the players that have a negative EFF.
 library(dplyr)
 select(filter(data, EFF<0),Player)
 ```
-• Use the function cor() to compute the correlation coefficients between EFF and all the
+? Use the function cor() to compute the correlation coefficients between EFF and all the
 variables used in the EFF 
-• Notice that Missed_FG, Missed_FT, and TO contribute negatively to EFF, so make
+? Notice that Missed_FG, Missed_FT, and TO contribute negatively to EFF, so make
 sure to take into account this negative association when calculating the correlation
 coefficients.
 ```{r}
