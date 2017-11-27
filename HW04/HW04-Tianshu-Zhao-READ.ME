@@ -1,0 +1,115 @@
+---
+title: "function test"
+author: "Tianshu Zhao"
+date: "2017Äê11ÔÂ17ÈÕ"
+output: html_document
+---
+```{r}
+a <- c(1,4,7, NA, 10)
+
+remove_missing <- function(a) {
+  result <- c()
+  for (i in 1:length(a)) {
+    if (!is.na(a[i])) {
+      result <- c(result, a[i])
+    }
+  }
+  return(result);
+}
+remove_missing(a)
+```
+
+```{r}
+a <- c(1,4,7,NA,10)
+get_avg <- function(a, na.rm) {
+  summation <- 0
+  len <- 0
+  for (i in 1:length(a)) {
+    if (na.rm && is.na(a[i])) {
+      next
+    } 
+    summation <- summation + a[i]
+    len <- len + 1
+  }
+  return(summation / len)
+}
+get_avg(a, na.rm = TRUE)
+```
+
+```{r}
+a <- c(1, 4, 7, NA, 10)
+get_percentile10 <- function(a,na.rm){
+  if(missing(na.rm)){
+    quantile(a, 0.1)
+  }else{
+    if(na.rm == TRUE){
+      quantile(remove_missing(a), 0.1)
+    }else{
+      quantile(a, 0.1)
+    }
+  }
+}
+get_percentile10(a, na.rm = TRUE)
+```
+
+```{r}
+a <- c(1,4,7, NA, 10)
+
+remove_missing <- function(a) {
+  result <- c()
+  for (i in 1:length(a)) {
+    if (!is.na(a[i])) {
+      result <- c(result, a[i])
+    }
+  }
+  return(result)
+}
+remove_missing(a)
+```
+```{r}
+a <- c(1, 4, 7, NA, 10)
+get_percentile90 <- function(a,na.rm){a
+  if(missing(na.rm)){
+    quantile(a, 0.9)
+  }else{
+    if(na.rm == TRUE){
+      quantile(remove_missing(a), 0.9)
+    }else{
+      quantile(a, 0.9)
+    }
+  }
+}
+get_percentile90(a, na.rm = TRUE)
+```
+```{r}
+a <- c(1,4,7,NA,10)
+get_avg <- function(a, na.rm) {
+  summation <- 0
+  len <- 0
+  for (i in 1:length(a)) {
+    if (na.rm && is.na(a[i])) {
+      next
+    } 
+    summation <- summation + a[i]
+    len <- len + 1
+  }
+  return(summation / len)
+}
+get_avg(a, na.rm = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

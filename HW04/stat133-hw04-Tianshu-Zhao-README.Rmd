@@ -1,0 +1,21 @@
+---
+title: "README.md"
+author: "Tianshu Zhao"
+date: "2017.11.17"
+output: github_document
+---
+Repository for HW assignments of Stat 133 (Fall 2017)
+
+- Student name: Tianshu Zhao
+- Github username: ariel1995zhao
+- Lab section: 109
+- GSI: Minchul
+
+-----
+Command that invoke on RStudio to run Shiny App 
+```{r}
+library(shiny)
+
+#Run an app from a subdirectory in the reop
+runGitHub("stat133-hws-fall17","ariel1995zhao",subdir = "hw04/app")
+```
