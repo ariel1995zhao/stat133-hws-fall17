@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Stat 133, Fall 2017
 
 Repository for HW assignments of Stat 133 (Fall 2017)
@@ -81,7 +80,3 @@ You should submit the repository link of each HW to bCourses, providing the comm
 You can keep working on a HW once its due date has passed. However, we won't grade anything after the due date. Why bother? Because it is good professional practice. And it will help you have a nice portfolio for the course that you could show to the rest of the world (don't underestimate this).
 
 
-=======
-# stat133-hws-fall17
-Stat133 in class study
->>>>>>> 49e20989455b389fb6902e9b238de53802fcc6ad

@@ -1,0 +1,217 @@
+---
+title: "hw02-Tianshu-Zhao"
+author: "Tianshu Zhao"
+date: "2017.10.1"
+output:
+  html_document: default
+  github_document: default
+---
+Download the data
+```{r}
+# download csv file to your working directory
+# (do NOT include this code in your Rmd)
+setwd('C:/Users/ariel/Desktop')
+github <- "https://github.com/ucb-stat133/stat133-fall-2017/raw/master/"
+file <- "data/nba2017-player-statistics.csv"
+csv <- paste0(github, file)
+download.file(url = csv, destfile = 'nba2017-player-statistics.csv')
+```
+___Question 1___ Create a data dictionary
+
+See the file 'nba2017-player-statistics-dictionary.md' in the 'data' folder in the 'hw02' dictorary.
+
+___Question 2____  
+
+Part I
+```{r}
+# read data as a format of  read.csv( ), and use str( ) to display its structure
+data <- read.csv('C:/Users/ariel/Desktop/nba2017-player-statistics.csv',
+        colClasses = c('character',
+                       'character',
+                       'factor',
+                       'character',
+                       'numeric',
+                       rep('integer',19)))
+data
+str(data)
+```
+Part II
+```{r}
+# Create another data frame for the output of read_csv( ) and  use str() to check its structure
+library(readr)
+data_new<- read_csv('C:/Users/ariel/Desktop/nba2017-player-statistics.csv',
+                    col_types = list(Player = col_character(), 
+                                     Team = col_character(),
+                                     Position = col_factor(c('C','PF','PF','SF','SG')),
+                                     Experience = col_character(),
+                                     Salary = col_double()))
+
+data_new
+str(data_new)
+```
+
+___Question 3___
+Replace all the occurences of "R" with 0, and then convert the entire column into integers.
+```{r}
+Experience_int <- as.integer(replace(data$Experience,data$Experience == "R", 0))
+Experience_int
+```
+
+___Question 4___  Performance of players
+Create variable first 
+```{r}
+# Missed field goals = Field Goals Made - Field Goal Attempts
+Missed_FG <- data$FGA- data$FGM
+#Missed free throws
+# Missed free throws = Free Throw Attempts = Free Throw made
+Missed_FT <- data$FTA- data$FTM
+#PTS (total points) = 2-Point field goal attempts -3-Point Field Goals 
+PTS <- data$FTM +2 * data$Points2 +3*data$Points3
+#REB(total rebounds: offiensive and defensive)
+# offensive rebounds - Defensive rebounds
+REB <- data$OREB +data$DREB
+#MPG(minutes per game; Not to be used when calculating EFF)
+#Minutes Played during regular season / Games Played furing regular season
+MPG <- data$MIN / data$GP
+```
+Create EFF 
+```{r}
+#EFF = (PTS + REB + AST + STL +BLK - Missed FG - Missed FT -TO) / GP
+# Only add data$EFF if the variable is in data frame
+data$EFF <- (PTS + REB + data$AST + data$STL + data$BLK - Missed_FG - Missed_FT - data$TO) / data$GP
+summary(data$EFF)
+```
+
+```{r}
+# Create histogram for the EFF
+hist(data$EFF,
+     main = 'Histogram of Efficiency (EFF)',
+     xlab = 'EFF',
+     las = 1,
+     col = 'blue')
+```
+Display the player name, team, salary, and EFF value of the top-10 players by EFF in
+decreasing order (display this information in a data frame).
+```{r}
+library(dplyr)
+#arrange to order dat by EFF
+#select to select column
+#slice to slice first 10 rows
+slice(select(arrange(data,desc(data$EFF)),c('Player','Team','Salary','EFF')),1:10)
+```
+Provide the names of the players that have a negative EFF.
+```{r}
+library(dplyr)
+select(filter(data, EFF<0),Player)
+```
+• Use the function cor() to compute the correlation coefficients between EFF and all the
+variables used in the EFF 
+• Notice that Missed_FG, Missed_FT, and TO contribute negatively to EFF, so make
+sure to take into account this negative association when calculating the correlation
+coefficients.
+```{r}
+# Rearrange correlation coefficients in decreasing order
+correlation <- data.frame(PTS = cor(data$EFF, PTS), 
+                          REB = cor(data$EFF,REB), 
+                          AST = cor(data$EFF, data$AST),
+                          STL = cor(data$EFF, data$STL),
+                          BLK = cor(data$EFF, data$BLK),
+                          Missed_FG = cor(data$EFF, - Missed_FG),
+                          Missed_FT = cor(data$EFF, - Missed_FT),
+                          TO = cor(data$EFF, - data$TO))
+```
+
+Display the sorted data frame
+```{r}
+correlation_s <- correlation[1, c(order(correlation[1, ], decreasing = TRUE))]
+correlation_s
+```
+
+Draw the barplot of the data frame
+```{r}
+barplot(as.numeric(correlation_s), 
+        ylim = c(-1, 1), 
+        main = 'Correlations between Player Stats and EFF',
+        names.arg = variable.names(correlation_s),
+        col = ifelse(as.numeric(correlation_s) > 0,"grey","coral1"),
+        border = NA,
+        cex.names = 0.6)
+abline(h = 0)
+```
+
+___Question 5___
+produce a scatterplot between Efficiency
+(x-axis) and Salary (y-axis), including a lowess smooth line (locally weighted scatterplot
+smoothing).
+
+```{r}
+# Scatterplot between EFF and Salary
+library(scales)
+plot(data$EFF, data$Salary/1000000,
+     main = 'Efficiency versa Salary (Million)',
+     xlab = 'Efficiency',
+     ylab = 'Salary in Million',
+     las = 1,
+     pch = 21,
+     col = alpha('blue', 0.6),
+     bg = alpha('red', 0.6))
+# Lowess line
+lines(lowess(data$EFF, data$Salary/1000000),
+      col = 'green',
+      lwd = 2)
+# Correlation coefficient between them
+cor(data$EFF, data$Salary/1000000)
+  
+```
+
+So, the relationship between salary and efficiency are positive related.As the efficient of a player goes higher, the salary of player goes higher as well.
+
+
+```{r}
+# Add MPG to dat.
+data<- mutate(data, MPG)
+# Create a data frame with players with MPG >= 20.
+players2 <- data[data$MPG >= 20, ]
+# Create a scatterplot between Efficiency and Salary, including a lowess smooth line.
+plot(players2$EFF, players2$Salary/1000000,
+     main = 'Efficiency vs Salary (Million)',
+     sub = 'For players with MPG >= 20',
+     xlab = 'Efficiency',
+     ylab = 'Salary (Million)',
+     las = 1,
+     pch = 21,
+     col = alpha('blue', 0.6),
+     bg = alpha('red', 0.6))
+
+lines(lowess(players2$EFF, players2$Salary/1000000),
+      col = 'green',
+      lwd = 2)
+# Compute the linear correlation coefficient between these variables.
+cor(players2$EFF, players2$Salary)
+```
+
+According to the images above, the relationship between players' salary and efficiency are still positive.
+
+
+___Question 6____
+
+Q:What things were hard, even though you saw them in class/lab?
+A:figure out the correct sequence of the syntax of the plots.
+Q:What was easy(-ish) even though we haven’t done it in class/lab?
+A: Google the things I don't know.
+Q:Did you need help to complete the assignment? If so, what kind of help?
+A: Kind of , I asked the GSI and my friends for help.
+Q: How much time did it take?
+A: About 5 hours, I spent very long time read and summarized the lecture slides.
+Q: What was the most time consuming part?
+A: Draw the plots.
+Q: Was there anything that you did not understand? or fully grasped?
+A: Somethings were perfectly run yesterday, but suddenly got some bugs when I woke up next day.
+Q:Was there anything frustrating in particular?
+A: Yes
+Q:Was there anything exciting? Something that you feel proud of? (Don’t be shy, we
+won’t tell anyone).
+A: No
+
+
+
